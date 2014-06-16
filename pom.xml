@@ -6,6 +6,25 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
     
+    <scm>
+        <connection>scm:git:git://github.com/MCGamerNetwork/Donkeychunk.git</connection>
+        <developerConnection>scm:git:git@github.com:MCGamerNetwork/Donkeychunk.git</developerConnection>
+        <url>https://github.com/MCGamerNetwork/Donkeychunk</url>
+    </scm>
+    
+    <distributionManagement>
+        <repository>
+            <id>mcgamer-deployment</id>
+            <name>MCGamer Public Releases</name>
+            <url>http://repo.mcgamer.net/content/repositories/releases-pub</url>
+        </repository>
+        <snapshotRepository>
+            <id>mcgamer-deployment</id>
+            <name>MCGamer Public Snapshots</name>
+            <url>http://repo.mcgamer.net/content/repositories/snapshots-pub</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -13,6 +32,14 @@
     </properties>
     
     <repositories>
+        <repository>
+            <id>bukkit-repo</id>
+            <url>http://repo.bukkit.org/content/groups/public</url>
+        </repository>
+        <repository>
+            <id>mcgamer</id>
+            <url>http://repo.mcgamer.net/contents/groups/public</url>
+        </repository>
         <repository>
             <id>evil-co</id>
             <url>http://nexus.evil-co.org/content/repositories/free/</url>
