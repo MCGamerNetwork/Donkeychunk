@@ -1,8 +1,8 @@
 package net.donkeychunk.java.chunk;
 
-import com.evilco.mc.nbt.tag.ITag;
 import java.util.LinkedList;
 import java.util.List;
+import net.donkeychunk.java.nbt.NBTTagCompound;
 import net.donkeychunk.java.region.DonkeyTileTick;
 
 /**
@@ -20,8 +20,8 @@ public class DonkeyChunk {
     private int[] heightMap;
     private DonkeyChunkSection[] sections = new DonkeyChunkSection[16];
     private List<DonkeyTileTick> tileTicks = new LinkedList<DonkeyTileTick>();
-    private List<ITag> entityList = new LinkedList<ITag>();
-    private List<ITag> tileEntityList = new LinkedList<ITag>();
+    private List<NBTTagCompound> entityList = new LinkedList<NBTTagCompound>();
+    private List<NBTTagCompound> tileEntityList = new LinkedList<NBTTagCompound>();
 
     public DonkeyChunk(int x, int z, DonkeyChunkFlags flags) {
         this.x = x;
@@ -93,19 +93,19 @@ public class DonkeyChunk {
         return tileTicks;
     }
 
-    public List<ITag> getEntityList() {
+    public List<NBTTagCompound> getEntityList() {
         return entityList;
     }
 
-    public void setEntityList(List<ITag> entityList) {
+    public void setEntityList(List<NBTTagCompound> entityList) {
         this.entityList = entityList;
     }
 
-    public List<ITag> getTileEntityList() {
+    public List<NBTTagCompound> getTileEntityList() {
         return tileEntityList;
     }
 
-    public void setTileEntityList(List<ITag> tileEntityList) {
+    public void setTileEntityList(List<NBTTagCompound> tileEntityList) {
         this.tileEntityList = tileEntityList;
     }
 

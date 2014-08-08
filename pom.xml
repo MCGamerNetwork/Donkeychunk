@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.donkeychunk</groupId>
     <artifactId>Donkeychunk</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     
     <scm>
@@ -40,19 +40,7 @@
             <id>mcgamer</id>
             <url>http://repo.mcgamer.net/contents/groups/public</url>
         </repository>
-        <repository>
-            <id>evil-co</id>
-            <url>http://nexus.evil-co.org/content/repositories/free/</url>
-        </repository>
     </repositories>
-    
-    <dependencies>
-        <dependency>
-            <groupId>com.evilco.mc</groupId>
-            <artifactId>nbt</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-    </dependencies>
     
     <build>
         <plugins>

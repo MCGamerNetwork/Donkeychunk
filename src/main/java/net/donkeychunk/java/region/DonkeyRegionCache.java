@@ -1,7 +1,7 @@
 package net.donkeychunk.java.region;
 
-import com.evilco.mc.nbt.stream.NbtInputStream;
-import com.evilco.mc.nbt.stream.NbtOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +56,7 @@ public class DonkeyRegionCache {
      * @param z
      * @return 
      */
-    public static NbtInputStream getChunkInputStream(File world, int x, int z) {
+    public static DataInputStream getChunkInputStream(File world, int x, int z) {
         return getRegion(world, x, z).getChunkInputStream(x & 31, z & 31);
     }
     
@@ -68,7 +68,7 @@ public class DonkeyRegionCache {
      * @param z
      * @return 
      */
-    public static NbtOutputStream getChunkOutputStream(File world, int x, int z) {
+    public static DataOutputStream getChunkOutputStream(File world, int x, int z) {
         return getRegion(world, x, z).getChunkOutputStream(x & 31, z & 31);
     }
 }

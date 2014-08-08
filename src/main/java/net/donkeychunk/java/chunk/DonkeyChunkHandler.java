@@ -1,15 +1,16 @@
 package net.donkeychunk.java.chunk;
 
-import com.evilco.mc.nbt.stream.NbtInputStream;
-import com.evilco.mc.nbt.stream.NbtOutputStream;
-import com.evilco.mc.nbt.tag.ITag;
-import com.evilco.mc.nbt.tag.TagCompound;
-import com.evilco.mc.nbt.tag.TagList;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import net.donkeychunk.java.nbt.NBTParser;
+import net.donkeychunk.java.nbt.NBTTagCompound;
+import net.donkeychunk.java.nbt.NBTTagList;
+import net.donkeychunk.java.nbt.NBTWriter;
 import net.donkeychunk.java.region.DonkeyRegionCache;
 import net.donkeychunk.java.region.DonkeyTileTick;
 
@@ -33,7 +34,7 @@ public class DonkeyChunkHandler {
      */
     public DonkeyChunk getChunk(int x, int z) {
         try {
-            NbtInputStream in = DonkeyRegionCache.getChunkInputStream(worldFile, x, z);
+            DataInputStream in = DonkeyRegionCache.getChunkInputStream(worldFile, x, z);
 
             if (in == null) {
                 return null;
@@ -122,19 +123,21 @@ public class DonkeyChunkHandler {
 
             // Read the entity / tile entity list
             if (flags.isEntityListPresent() || flags.isTileEntityListPresent()) {
-                TagCompound compound = (TagCompound) in.readTag();
-                
-                if (flags.isEntityListPresent()) {
-                    TagList entityList = (TagList) compound.getTag("Entities");
-                    if (entityList != null) {
-                        chunk.setEntityList(entityList.getTags());
-                    }
-                }
+                NBTTagCompound compound = NBTParser.parseNBTStream(in);
 
-                if (flags.isTileEntityListPresent()) {
-                    TagList tileEntityList = (TagList) compound.getTag("TileEntities");
-                    if (tileEntityList != null) {
-                        chunk.setTileEntityList(tileEntityList.getTags());
+                if (compound != null) {
+                    if (flags.isEntityListPresent()) {
+                        NBTTagList entityList = (NBTTagList) compound.get("Entities");
+                        if (entityList != null) {
+                            chunk.setEntityList(entityList.getItems());
+                        }
+                    }
+
+                    if (flags.isTileEntityListPresent()) {
+                        NBTTagList tileEntityList = (NBTTagList) compound.get("TileEntities");
+                        if (tileEntityList != null) {
+                            chunk.setTileEntityList(tileEntityList.getItems());
+                        }
                     }
                 }
             }
@@ -155,7 +158,7 @@ public class DonkeyChunkHandler {
         try {
             DataOutputStream dataOut = DonkeyRegionCache.getChunkOutputStream(worldFile, chunk.getX(), chunk.getZ());
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            NbtOutputStream out = new NbtOutputStream(baos);
+            DataOutputStream out = new DataOutputStream(baos);
             DonkeyChunkSection[] sections = chunk.getSections();
 
             // Get the flags
@@ -286,43 +289,45 @@ public class DonkeyChunkHandler {
             }
 
             // Entities / Tile Entities
-            TagList entityList = null;
-            TagList tileEntityList = null;
-            
+            NBTTagList entityList = null;
+            NBTTagList tileEntityList = null;
+
             if (chunk.getEntityList() != null && !chunk.getEntityList().isEmpty()) {
                 flags.setEntityListPresent(true);
-                entityList = new TagList("Entities");
-                for (ITag tag : chunk.getEntityList()) {
-                    entityList.addTag(tag);
-                }
+                entityList = new NBTTagList(10);
+                entityList.getItems().addAll(chunk.getEntityList());
             } else {
                 flags.setEntityListPresent(false);
             }
 
             if (chunk.getTileEntityList() != null && !chunk.getTileEntityList().isEmpty()) {
                 flags.setTileEntityListPresent(true);
-                tileEntityList = new TagList("TileEntities");
-                for (ITag tag : chunk.getTileEntityList()) {
-                    tileEntityList.addTag(tag);
-                }
+                tileEntityList = new NBTTagList(10);
+                tileEntityList.getItems().addAll(chunk.getTileEntityList());
             } else {
                 flags.setTileEntityListPresent(false);
             }
 
             if (flags.isEntityListPresent() || flags.isTileEntityListPresent()) {
-                TagCompound compound = new TagCompound("NBTAdd");
-                
+                NBTTagCompound compound = new NBTTagCompound("NBTAdd");
+
                 if (entityList != null) {
-                    compound.setTag(entityList);
+                    compound.set("Entities", entityList);
                 }
-                
+
                 if (tileEntityList != null) {
-                    compound.setTag(tileEntityList);
+                    compound.set("TileEntities", tileEntityList);
                 }
-                
-                out.write(compound);
+
+                NBTWriter.writeNBTStream(compound, out);
+                File dir = new File("debug");
+                if (!dir.isDirectory()) {
+                    dir.mkdir();
+                }
+                DataOutputStream debugOut = new DataOutputStream(new FileOutputStream(new File(dir, "chunk." + chunk.getX() + "." + chunk.getZ() + ".nbtdebug.dat")));
+                NBTWriter.writeNBTStream(compound, debugOut);
             }
-            
+
             // Write flags
             dataOut.writeByte((byte) flags.getFlags());
             out.close();

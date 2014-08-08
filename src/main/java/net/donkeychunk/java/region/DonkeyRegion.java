@@ -1,9 +1,9 @@
 package net.donkeychunk.java.region;
 
-import com.evilco.mc.nbt.stream.NbtInputStream;
-import com.evilco.mc.nbt.stream.NbtOutputStream;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -71,7 +71,7 @@ public class DonkeyRegion {
         }
     }
 
-    public NbtInputStream getChunkInputStream(int x, int z) {
+    public DataInputStream getChunkInputStream(int x, int z) {
         try {
             byte[] data;
             int read;
@@ -97,9 +97,9 @@ public class DonkeyRegion {
             }
 
             if (hasChunkCompression) {
-                return new NbtInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(data))));
+                return new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(data))));
             } else {
-                return new NbtInputStream(new BufferedInputStream(new ByteArrayInputStream(data)));
+                return new DataInputStream(new BufferedInputStream(new ByteArrayInputStream(data)));
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -107,16 +107,16 @@ public class DonkeyRegion {
         }
     }
 
-    public NbtOutputStream getChunkOutputStream(int x, int z) {
+    public DataOutputStream getChunkOutputStream(int x, int z) {
         if (isOutOfBounds(x, z)) {
             return null;
         }
 
         try {
             if (hasChunkCompression) {
-                return new NbtOutputStream(new GZIPOutputStream(new DonkeyChunkBuffer(this, x, z)));
+                return new DataOutputStream(new GZIPOutputStream(new DonkeyChunkBuffer(this, x, z)));
             } else {
-                return new NbtOutputStream(new DonkeyChunkBuffer(this, x, z));
+                return new DataOutputStream(new DonkeyChunkBuffer(this, x, z));
             }
         } catch (IOException ex) {
             ex.printStackTrace();
